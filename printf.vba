@@ -153,21 +153,16 @@ Function printf(ByRef s As String, ParamArray p()) As String
             
             Case Is = "S" ' Strings. If the argument arg is null, then the result is "null".
             ' If arg implements Formattable, then arg.formatTo is invoked. Otherwise, the result is obtained by invoking arg.toString().
-                On Error GoTo SErrorHandler
-                If (IsNull(p(iParamItem)) Or p(iParamItem) = vbNull) Then
+                If (iVarType = 10) Then
+                    sRet = "null"
+                ElseIf (IsNull(p(iParamItem)) Or p(iParamItem) = vbNull) Then
                     sRet = "null"
                 Else
                     sRet = p(iParamItem)
                 End If
                 
-                GoTo SCont
-SErrorHandler:
-                sRet = "null"
-SCont:
-                On Error GoTo 0
-                
-                iComp = StrComp(sSpec, "s", 0)
-                If (iComp = 1) Then
+                iComp = StrComp(sSpec, "S", 0)
+                If (iComp = 0) Then
                     sRet = UCase(sRet)
                 End If
                 
@@ -339,6 +334,13 @@ SCont:
     printf = Replace(Replace(Replace(sRet, Chr$(1) & Chr$(1), "%"), "\n", vbCrLf), "\t", vbTab)
 End Function
 Function AddPadding(str As String, width As Integer, flags As String)
+    ' When a width format is provided, make sure there are enough spaces to make the string long enough.
+    ' The default is to put the spaces at the left of the output string, but it is possible to "left justify"
+    ' the output and put the spaces at the right.
+    
+    ' str is the string to be formated
+    ' width is the desired width as an integer
+    ' flags are the flags provided for th eformat. If it includes a dash ("-") then left justify
     Dim spacesNeeded As Integer
     Dim spaces As String
     Dim i As Integer
@@ -357,6 +359,11 @@ Function AddPadding(str As String, width As Integer, flags As String)
 End Function
 
 Function TimeDate(ByVal str As String, fmt As String)
+    ' takes a time/date string (str) and the desired format (fmt) string in standard printf format
+    ' and formats it. Think of it as a conversion from printf to VBA. The printf format strings
+    ' are all of the form %T* where the T is always present (may be lowercase) and the star
+    ' represents the "sub-format" as one of th eoptions below.
+    
     Dim sCase As String, i As Integer
     sCase = Mid(fmt, 2)
     Select Case sCase
@@ -506,20 +513,20 @@ Function ConvertToZeroes(str As String)
 End Function
 
 Function test()
-Debug.Print printf("The quick brown %-10S jumps over the lazy %-8S!", "foxxy fox", "dog")
+'Debug.Print printf("The quick brown %-10S jumps over the lazy %-8S!", "foxxy fox", "dog")
 Debug.Print printf("%8S The quick brown %S jumps over the lazy!", "foxxy fox", "dog")
-Debug.Print printf("floats: %+4.2f %+.0e %+E %+0000.0f \n", 3.1416, 3.1416, 3.1416, 3.1416);
+'Debug.Print printf("floats: %+4.2f %+.0e %+E %+0000.0f \n", 3.1416, 3.1416, 3.1416, 3.1416);
 Debug.Print printf("The quick 10%% brown %S jumps over the\nlazy %s", "fox", "dog")
-Debug.Print printf("Boolean tests (vbFalse) %b\n(nothing) %b\n(Null) %b\n(vbNull) %b\n(1=1) %b\n(1=0) %b\n(1) %b\n(0) %b XXX", vbFalse, , Null, vbNull, 1 = 1, 1 = 0, 1, 0)
-Debug.Print printf("Hex test: %h XXX", 255)
+'Debug.Print printf("Boolean tests (vbFalse) %b\n(nothing) %b\n(Null) %b\n(vbNull) %b\n(1=1) %b\n(1=0) %b\n(1) %b\n(0) %b XXX", vbFalse, , Null, vbNull, 1 = 1, 1 = 0, 1, 0)
+'Debug.Print printf("Hex test: %h XXX", 255)
 Debug.Print printf("Param test, 3: %3$s, 2: %2$S, 1: %1$s, 4: %s XXX", "one", "two", "three", "four")
-Debug.Print printf("Char test:\n&H63: %c\nf: %c XXX", &H63, "f")
-Debug.Print printf("D %2$+5d XXX", 32, 16)
-Debug.Print printf("D %2$00000.d XXX", 32, 16.5)
-Debug.Print printf("Oct test: %o XXX", 64)
-Debug.Print printf("Hex test: %h XXX", 255)
-Debug.Print printf("E: %0.000E XXX", 256789125)
-Debug.Print printf("H: %tF XXX", Now)
+'Debug.Print printf("Char test:\n&H63: %c\nf: %c XXX", &H63, "f")
+'Debug.Print printf("D %2$+5d XXX", 32, 16)
+'Debug.Print printf("D %2$00000.d XXX", 32, 16.5)
+'Debug.Print printf("Oct test: %o XXX", 64)
+'Debug.Print printf("Hex test: %h XXX", 255)
+'Debug.Print printf("E: %0.000E XXX", 256789125)
+'Debug.Print printf("H: %tF XXX", Now)
 
 End Function
 
