@@ -5,6 +5,8 @@ I have tried to make a function that should operate just like java's printf func
 https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html
 
 For example:
+
+~~~~
 Debug.Print printf("The quick brown %-10S jumps over the lazy %-8S!", "foxxy fox", "dog")
 Debug.Print printf("%8S The quick brown %S jumps over the lazy!", "foxxy fox", "dog")
 Debug.Print printf("floats: %+4.2f %+.0e %+E %+0000.0f \n", 3.1416, 3.1416, 3.1416, 3.1416);
@@ -19,6 +21,7 @@ Debug.Print printf("Oct test: %o XXX", 64)
 Debug.Print printf("Hex test: %h XXX", 255)
 Debug.Print printf("E: %0.000E XXX", 256789125)
 Debug.Print printf("H: %tF XXX", Now)
+~~~~
 
 There are a couple of functions that will not be supported:
 * %Tc, %Tz, %TZ Because VBA does not support Time Zones. I could try and write something to fake it, I suppose...
